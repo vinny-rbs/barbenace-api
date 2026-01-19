@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
+    "baseUrl": ".", 
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "target": "ES2023",
     "esModuleInterop": true,
     "types": [],
