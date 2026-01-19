@@ -18,11 +18,11 @@ Projetada seguindo boas práticas de desenvolvimento backend, a Barbenance API f
 ## Tecnologias
 
 ### Backend
-- NodeJs / ExpressJs
+- NodeJs / ExpressJs / Prisma
 - API REST
 
 ### Banco de Dados
-- MongoDb
+- Postgres
 
 ### Ferramentas e Boas Práticas
 - Git & GitHub
