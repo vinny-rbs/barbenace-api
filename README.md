@@ -36,10 +36,14 @@ Projetada seguindo boas práticas de desenvolvimento backend, a Barbenance API f
 ## Estrutura do Projeto
 
 ```txt
-src/
- ├── services/
- ├── models/
- └── router/
+src
+ ┣ app
+ ┃ ┗ controllers
+ ┃ ┃ ┣ employeeRouter.js
+ ┃ ┃ ┗ router.js
+ ┣ config
+ ┃ ┗ prisma.js
+ ┗ server.js
 
 ```
 
