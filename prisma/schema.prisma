@@ -4,6 +4,143 @@ generator client {
 }
 
 datasource db {
-	  provider = "mongodb"
-	  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Address {
+  id           Int    @id @default(autoincrement())
+  country      String @db.VarChar(25)
+  state        String @db.VarChar(25)
+  city         String @db.VarChar(25)
+  neighborhood String @db.VarChar(25)
+  public_place String @db.VarChar(25)
+
+  establishment Establishment?
+  employee      Employee?
+  client        Client?
+
+  @@map("address")
+}
+
+model Telephone {
+  id     Int    @id @default(autoincrement())
+  number String @db.VarChar(20)
+
+  establishment Establishment?
+  employee      Employee?
+  client        Client?
+
+  @@map("telephone")
+}
+
+model Establishment {
+  id            Int      @id @default(autoincrement())
+  trade_name    String   @db.VarChar(115)
+  cnpj          String   @unique @db.VarChar(14)
+  opening_hours DateTime
+  closing_hours DateTime
+
+  telephone    Telephone @relation(fields: [telephone_id], references: [id])
+  telephone_id Int       @unique
+  address      Address   @relation(fields: [address_id], references: [id])
+  address_id   Int       @unique
+
+  employees   Employee[]
+  schedulings Scheduling[]
+
+  @@map("establishment")
+}
+
+model Servicess {
+  id          Int     @id @default(autoincrement())
+  name        String  @db.VarChar(115)
+  price       Decimal @db.Decimal(10, 2)
+  description String  @db.VarChar(200)
+  duration    Int
+
+  schedulings Scheduling[]
+
+  @@map("servicess")
+}
+
+model Employee {
+  id        Int     @id @default(autoincrement())
+  name      String  @db.VarChar(115)
+  photo     String?
+  specialty String  @db.VarChar(80)
+  email     String  @unique @db.VarChar(64)
+  cpf       String  @unique @db.VarChar(11)
+
+  telephone        Telephone     @relation(fields: [telephone_id], references: [id])
+  telephone_id     Int           @unique
+  address          Address       @relation(fields: [address_id], references: [id])
+  address_id       Int           @unique
+  establishment    Establishment @relation(fields: [establishment_id], references: [id])
+  establishment_id Int
+
+  reviews     Reviews[]
+  schedulings Scheduling[]
+
+  @@map("employee")
+}
+
+model Client {
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(115)
+  photo String?
+  email String  @unique @db.VarChar(64)
+
+  telephone    Telephone @relation(fields: [telephone_id], references: [id])
+  telephone_id Int       @unique
+  address      Address   @relation(fields: [address_id], references: [id])
+  address_id   Int       @unique
+
+  schedulings Scheduling[]
+
+  @@map("client")
+}
+
+model Scheduling {
+  id    String   @id @default(uuid())
+  time  DateTime
+  stats Stats    @default(pending)
+  note  String?  @db.VarChar(300)
+
+  client           Client        @relation(fields: [client_id], references: [id])
+  client_id        Int
+  employee         Employee      @relation(fields: [employee_id], references: [id])
+  employee_id      Int
+  service          Servicess     @relation(fields: [service_id], references: [id])
+  service_id       Int
+  establishment    Establishment @relation(fields: [establishment_id], references: [id])
+  establishment_id Int
+
+  @@map("scheduling")
+}
+
+enum Stats {
+  canceled
+  pending
+  completed
+}
+
+model Reviews {
+  id      String @id @default(uuid())
+  rating  Int
+  message String @db.VarChar(200)
+
+  employee    Employee @relation(fields: [employee_id], references: [id])
+  employee_id Int
+
+  @@map("reviews")
+}
+
+model Notification {
+  id      String   @id @default(uuid())
+  message String   @db.VarChar(200)
+  date    DateTime @default(now())
+
+  @@map("notification")
 }
